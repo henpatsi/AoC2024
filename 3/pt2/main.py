@@ -1,18 +1,25 @@
 import re
 
-REGEX_PATTERN = "mul\([0-9]{1,3},[0-9]{1,3}\)"
+REGEX_PATTERN = "mul\([0-9]{1,3},[0-9]{1,3}\)|do\(\)|don't\(\)"
 
-g_mul_enabled = True
+mul_enabled = True
 
 def get_line_muls(line):
     line_mul_sum = 0
+    global mul_enabled
 
-    muls = re.search(REGEX_PATTERN, line)
-    while muls != None:
-        nums = line[muls.start() + 4:muls.end() - 1].split(",")
-        line_mul_sum += int(nums[0]) * int(nums[1])
-        line = line[muls.end() - 1:]
-        muls = re.search(REGEX_PATTERN, line)
+    match = re.search(REGEX_PATTERN, line)
+    while match != None:
+        match_string = match.group(0)
+        if mul_enabled and line[match.start()] == "m":
+            nums = line[match.start() + 4:match.end() - 1].split(",")
+            line_mul_sum += int(nums[0]) * int(nums[1])
+        elif mul_enabled and match_string == "don't()":
+            mul_enabled = False
+        elif not mul_enabled and match_string == "do()":
+            mul_enabled = True
+        line = line[match.end() - 1:]
+        match = re.search(REGEX_PATTERN, line)
 
     return line_mul_sum
 
