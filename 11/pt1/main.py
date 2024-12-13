@@ -19,8 +19,9 @@ def main():
     for line in input_file:
         stones = [int(s) for s in line.strip().split()]
 
-    for _ in range(75):
+    for _ in range(8):
         stones = blink(stones)
+        print(stones)
 
     print(len(stones))
 
